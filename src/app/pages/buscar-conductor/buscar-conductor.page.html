@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-buttons slot="end">
+      <ion-button routerLink="/perfil">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+  <ion-card *ngFor="let conductor of conductores">
+    <ion-card-header>
+      <ion-card-title>{{ conductor.nombre }}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p><strong>Destino:</strong> {{ conductor.destino }}</p>
+      <p><strong>Asientos disponibles:</strong> {{ conductor.asientos }}</p>
+      <p><strong>Costo por persona:</strong> ${{ conductor.costo }}</p>
+
+      <ion-button expand="block" color="tertiary" (click)="solicitarViaje(conductor)">
+        Solicitar Viaje
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <div *ngIf="conductores.length === 0" class="no-data">
+    <p>No hay conductores disponibles para este destino.</p>
+  </div>
+
+  <div>
+    <ion-button expand="block" routerLink="/pasajero" color="primary" class="custom-button">
+      Volver
+    </ion-button>
+  </div>
+</ion-content>

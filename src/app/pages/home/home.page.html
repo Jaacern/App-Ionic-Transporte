@@ -1,0 +1,50 @@
+<ion-content class="ion-padding" color="dark">
+  <div class="form-slide">
+    <h2 class="title">Inicia Sesión</h2>
+    <form #formulario="ngForm" (ngSubmit)="onSubmit()">
+      <ion-item lines="none">
+        <ion-icon name="mail" slot="start"></ion-icon>
+        <ion-input 
+          label="Correo Electrónico" 
+          required 
+          type="email"
+          labelPlacement="floating"
+          [(ngModel)]="email" 
+          name="email"
+          placeholder="Correo Electrónico"></ion-input>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-icon name="lock-closed" slot="start"></ion-icon>
+        <ion-input 
+          label="Contraseña" 
+          required 
+          [type]="showPassword ? 'text' : 'password'"
+          labelPlacement="floating" 
+          [(ngModel)]="password" 
+          name="password"
+          placeholder="******"></ion-input>
+        <ion-icon 
+          name="eye-off" 
+          slot="end" 
+          *ngIf="!showPassword" 
+          (click)="togglePasswordVisibility()">
+        </ion-icon>
+        <ion-icon 
+          name="eye" 
+          slot="end" 
+          *ngIf="showPassword" 
+          (click)="togglePasswordVisibility()">
+        </ion-icon>
+      </ion-item>
+      <ion-button expand="block" fill="clear" type="submit" [disabled]="formulario.invalid">
+        Iniciar Sesión
+      </ion-button>
+    </form>
+    <ion-item lines="none">
+      <p>¿No tienes una cuenta? <a href="/sign-up">Regístrate</a></p>
+    </ion-item>
+    <ion-item lines="none">
+      <p>¿Olvidaste tu contraseña? <a href="/recuperar">Recuperar Contraseña</a></p>
+    </ion-item>
+  </div>
+</ion-content>

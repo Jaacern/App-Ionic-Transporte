@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title color="success">Historial de Viajes</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/conductor"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+  <ion-card *ngIf="viajes.length === 0">
+    <ion-card-content>No tienes viajes en tu historial.</ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="viajes.length > 0">
+    <ion-item *ngFor="let viaje of viajes">
+      <ion-label>
+        <h2>Destino: {{ viaje.destino }}</h2>
+        <p>Descripción: {{ viaje.descripcion }}</p>
+        <p>Asientos: {{ viaje.asientos }}</p>
+        <p>Costo: ${{ viaje.costo | number:'1.0-2' }}</p>
+      </ion-label>
+      <ion-button color="danger" slot="end" (click)="eliminarViaje(viaje.key)">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

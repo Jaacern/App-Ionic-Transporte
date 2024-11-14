@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar color="dark">
+
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        Cerrar Sesión
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+  <div class="admin-panel">
+    <!-- Gestión de Usuarios -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Gestión de Usuarios</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" fill="outline" color="success" (click)="gestionarUsuarios()">
+          <ion-icon name="people-outline" slot="start"></ion-icon>
+          Ver Usuarios
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Gestión de Solicitudes -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Solicitudes de Transporte</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" fill="outline" color="tertiary" (click)="gestionarSolicitudes()">
+          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          Revisar Solicitudes
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Reportes y Estadísticas -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Reportes y Estadísticas</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" fill="outline" color="warning" (click)="verReportes()">
+          <ion-icon name="stats-chart-outline" slot="start"></ion-icon>
+          Ver Reportes
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Notificaciones -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Notificaciones</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" fill="outline" color="danger" (click)="enviarNotificaciones()">
+          <ion-icon name="notifications-outline" slot="start"></ion-icon>
+          Enviar Notificaciones
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

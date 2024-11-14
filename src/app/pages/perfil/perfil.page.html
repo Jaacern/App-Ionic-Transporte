@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToRoleSelection()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+  <!-- Contenedor principal de perfil -->
+  <div class="profile-container">
+
+    <!-- Imagen de perfil y botón de edición -->
+    <div class="profile-image-container">
+      <img *ngIf="profileImageUrl | async as imageUrl; else defaultImage" [src]="imageUrl" alt="Profile Image" />
+      <ng-template #defaultImage>
+        <img src="assets/default-profile.png" alt="Default Profile Image" />
+      </ng-template>
+      <!-- Icono de edición en la esquina inferior derecha de la imagen -->
+      <label class="edit-icon">
+        <ion-icon name="pencil-outline"></ion-icon>
+        <input type="file" (change)="onFileSelected($event)" hidden />
+      </label>
+    </div>
+
+    <!-- Correo electrónico del usuario -->
+    <h2 class="user-email">{{ userEmail }}</h2>
+
+    <!-- Información del nivel y experiencia -->
+    <div class="user-level-info">
+      <h3>Nivel {{ userLevel }}</h3>
+      <div class="experience-bar">
+        <div class="experience-progress" [style.width.%]="(userExperience / experienceNeededForNextLevel) * 100"></div>
+      </div>
+      <p>Experiencia: {{ userExperience }} / {{ experienceNeededForNextLevel }}</p>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <ion-button expand="block" color="success" (click)="saveProfileImageUrl()">
+        Guardar Imagen de Perfil
+      </ion-button>
+      <ion-button expand="block" color="danger" (click)="logout()">
+        Cerrar Sesión
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

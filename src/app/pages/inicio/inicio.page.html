@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>TeLlevoAPP</ion-title>
+    <ion-button (click)="logout()">
+      <ion-icon name="log-out-outline"></ion-icon>
+      Cerrar sesión
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+  <div class="home-container">
+    <!-- Mostrar mensajes personalizados según el rol -->
+    <h2 *ngIf="role === 'conductor'">Bienvenido, Conductor</h2>
+    <h2 *ngIf="role === 'pasajero'">Bienvenido, Pasajero</h2>
+    <h2 *ngIf="role === 'admin'">Bienvenido, Admin</h2>
+
+    <!-- Opciones según el rol -->
+    <div *ngIf="role === 'conductor'">
+      <ion-button expand="block" routerLink="/crear-viaje">Crear un viaje</ion-button>
+      <ion-button expand="block" routerLink="/viajes">Ver tus viajes</ion-button>
+    </div>
+
+    <div *ngIf="role === 'pasajero'">
+      <ion-button expand="block" routerLink="/buscar-viaje">Buscar un viaje</ion-button>
+    </div>
+
+    <div *ngIf="role === 'admin'">
+      <ion-button expand="block" routerLink="/gestionar-usuarios">Gestionar Usuarios</ion-button>
+      <ion-button expand="block" routerLink="/reportes">Ver Reportes</ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar color="dark" style="background-color: #000;">
+    <ion-buttons slot="end">
+      <ion-button routerLink="/perfil">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </ion-button>
+      <ion-button routerLink="//role-selection">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content style="background-color: #000;">
+  <!-- Mensaje cuando no hay viajes disponibles -->
+  <ion-card *ngIf="viajes.length === 0" class="no-viajes-card" style="margin: 20px; text-align: center; background-color: #111; color: #FFF; border-radius: 10px;">
+    <ion-card-content style="font-size: 1.1rem;">
+      <p>No hay viajes disponibles en este momento.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Lista de viajes disponibles -->
+  <ion-list *ngIf="viajes.length > 0" style="background-color: #000;">
+    <ion-item *ngFor="let viaje of viajes" 
+              (click)="seleccionarViaje(viaje)" 
+              [ngClass]="{'no-asientos': viaje.asientosDisponibles === 0}" 
+              style="margin: 10px; border-radius: 8px; background-color: #111; color: #FFF; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);">
+      <ion-label style="padding: 10px;">
+        <h2 [style.color]="viaje.asientosDisponibles === 0 ? '#AAA' : '#1DB954'" style="font-size: 1.2rem; font-weight: bold;">{{ viaje.destino }}</h2>
+        <p style="font-size: 1rem;">{{ viaje.descripcion }}</p>
+        <p style="font-size: 0.9rem; color: #CCC;">
+          <ion-icon name="cash-outline" style="margin-right: 5px; color: #FFC107;"></ion-icon> Costo: {{ viaje.costo | currency }}
+        </p>
+        <p style="font-size: 0.9rem; color: #CCC;">
+          <ion-icon name="people-outline" style="margin-right: 5px; color: #00BFFF;"></ion-icon> Asientos disponibles: {{ viaje.asientosDisponibles }}
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Detalles del viaje seleccionado y mapa -->
+  <div *ngIf="selectedViaje" style="margin-top: 20px;">
+    <ion-card style="margin: 20px; border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); color: #FFF;">
+      <ion-card-header>
+        <ion-card-title style="font-size: 1.3rem; text-align: center; font-weight: bold;">
+          Ruta hacia {{ selectedViaje.destino }}
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content style="text-align: center;">
+        <!-- Contenedor del mapa -->
+        <div id="mapa-viaje" style="height: 300px; border-radius: 12px; margin: 10px 0; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); background-color: #000;"></div>
+        <p style="font-size: 1rem; color: #CCC;">
+          <ion-icon name="people-outline" style="margin-right: 5px; color: #00BFFF;"></ion-icon>
+          Asientos disponibles: {{ selectedViaje.asientosDisponibles }}
+        </p>
+        <!-- Botón para aceptar el viaje -->
+        <ion-button expand="block" color="success" style="margin-top: 15px; --background: #1DB954; --color: #FFF;" (click)="aceptarViaje(selectedViaje)">
+          Aceptar Viaje
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
