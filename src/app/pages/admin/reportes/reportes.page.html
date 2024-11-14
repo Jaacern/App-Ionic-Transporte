@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>Reportes y Estadísticas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+  <div class="admin-panel">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Número de Usuarios Registrados</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        {{ totalUsuarios }}
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Porcentaje de Viajes</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Activos: <span style="color: green">{{ porcentajeViajes.activos | number: '1.1-1' }}%</span></p>
+        <p>Cancelados: <span style="color: red">{{ porcentajeViajes.cancelados | number: '1.1-1' }}%</span></p>
+        <p>Terminado: <span style="color: blue">{{ porcentajeViajes.terminados | number: '1.1-1' }}%</span></p>
+        <p>En Curso: <span style="color: orange">{{ porcentajeViajes.enCurso | number: '1.1-1' }}%</span></p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Porcentaje de Solicitudes de Viajes</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        {{ porcentajeSolicitudes | number: '1.1-1' }}%
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

@@ -1,0 +1,35 @@
+ion-content {
+    --background: #1c1c1e; /* Fondo oscuro similar al de la página Admin */
+  
+    .admin-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+  
+    ion-card {
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 20px;
+      --background: #2a2a2b;  /* Fondo oscuro para cada tarjeta */
+      --border-radius: 10px;  /* Bordes redondeados */
+      --color: #ffffff;  /* Texto blanco */
+  
+      ion-card-title {
+        font-size: 1.5rem;
+        color: #ffffff; /* Color de los títulos */
+      }
+  
+      ion-button {
+        width: 100%;
+        --border-radius: 8px; /* Bordes redondeados para botones */
+      }
+  
+      ion-icon {
+        color: #ffffff; /* Color blanco para los iconos */
+      }
+    }
+  }
+  

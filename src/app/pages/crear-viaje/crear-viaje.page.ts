@@ -27,7 +27,6 @@ export class CrearViajePage implements OnInit, OnDestroy {
   userExperience: number = 0;
   userLevel: number = 1;
   experienceNeededForNextLevel: number = 10;
-  viajeData: any;
 
   constructor(
     private db: AngularFireDatabase,
@@ -59,21 +58,10 @@ export class CrearViajePage implements OnInit, OnDestroy {
     });
 
     new mapboxgl.Marker().setLngLat(this.ubicacionInicial).addTo(this.map);
-
-    // Verifica si hay datos guardados localmente al iniciar
-    this.loadSavedFormData();
-
-    // Detectar cuando se restablezca la conexión
-    window.addEventListener('online', () => {
-      this.sendSavedData();
-    });
   }
 
   ngOnDestroy() {
     this.map.remove();
-    window.removeEventListener('online', () => {
-      this.sendSavedData();
-    });
   }
 
   loadUserExperience() {
@@ -84,54 +72,6 @@ export class CrearViajePage implements OnInit, OnDestroy {
           this.userLevel = profile.level || 1;
         }
       });
-    }
-  }
-
-  // Cargar los datos guardados si la conexión se pierde
-  loadSavedFormData() {
-    const savedData = JSON.parse(localStorage.getItem('viajeTemp') || '{}');
-    if (savedData && savedData.destino) {
-      this.destino = savedData.destino;
-      this.descripcion = savedData.descripcion;
-      this.asientos = savedData.asientos;
-      this.costo = savedData.costo;
-      this.destinoCoords = savedData.destinoCoords;
-      console.log('Datos recuperados del almacenamiento local:', savedData);
-    }
-  }
-
-  // Función para enviar los datos guardados cuando haya conexión
-  async sendSavedData() {
-    const savedData = JSON.parse(localStorage.getItem('viajeTemp') || '{}');
-    if (savedData && savedData.destino && this.userId) {
-      const viajeData = {
-        destino: savedData.destino,
-        descripcion: savedData.descripcion,
-        asientos: savedData.asientos,
-        costo: savedData.costo,
-        ubicacionInicial: savedData.ubicacionInicial,
-        destinoCoords: savedData.destinoCoords,
-        asientosDisponibles: savedData.asientos,
-        conductorId: this.userId,
-        estado: 'activo', // Establecer estado como activo
-        ruta: savedData.ruta,
-      };
-
-      try {
-        await this.db.list('viajes').push(viajeData).then(viajeRef => {
-          const viajeId = viajeRef.key || '';
-          this.db.object(`viajes/${viajeId}`).update({ id: viajeId });
-          this.db.list(`usuarios/${this.userId}/viajes`).set(viajeId, viajeData);
-
-          // Eliminar los datos del localStorage después de enviarlos
-          localStorage.removeItem('viajeTemp');
-          this.presentToast('Datos enviados y viaje creado exitosamente.');
-          this.router.navigate(['/conductor']);
-        });
-      } catch (error) {
-        console.error('Error al crear el viaje:', error);
-        this.mostrarAlerta('Ocurrió un error al crear el viaje.');
-      }
     }
   }
 
@@ -164,48 +104,48 @@ export class CrearViajePage implements OnInit, OnDestroy {
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${this.ubicacionInicial.join(',')};${destinoCoords.join(',')}?geometries=geojson&access_token=${environment.accessToken}`;
 
     try {
-      const response = await fetch(url);
-      const data = await response.json();
-      const route = data.routes[0].geometry.coordinates;
+        const response = await fetch(url);
+        const data = await response.json();
+        const route = data.routes[0].geometry.coordinates;
 
-      const geojson: GeoJSON.Feature<GeoJSON.LineString> = {
-        type: 'Feature',
-        geometry: {
-          type: 'LineString',
-          coordinates: route,
-        },
-        properties: {} // Asegúrate de que 'properties' esté presente
-      };
+        const geojson: GeoJSON.Feature<GeoJSON.LineString> = {
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: route,
+            },
+            properties: {} // Asegúrate de que 'properties' esté presente
+        };
 
-      if (this.map.getSource('route')) {
-        (this.map.getSource('route') as mapboxgl.GeoJSONSource).setData(geojson);
-      } else {
-        this.map.addSource('route', {
-          type: 'geojson',
-          data: geojson
-        });
+        if (this.map.getSource('route')) {
+            (this.map.getSource('route') as mapboxgl.GeoJSONSource).setData(geojson);
+        } else {
+            this.map.addSource('route', {
+                type: 'geojson',
+                data: geojson
+            });
 
-        this.map.addLayer({
-          id: 'route',
-          type: 'line',
-          source: 'route',
-          layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-          },
-          paint: {
-            'line-color': '#1DB954',
-            'line-width': 5
-          }
-        });
-      }
+            this.map.addLayer({
+                id: 'route',
+                type: 'line',
+                source: 'route',
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': '#1DB954',
+                    'line-width': 5
+                }
+            });
+        }
 
-      return route;
+        return route;
     } catch (error) {
-      console.error('Error al dibujar la ruta:', error);
-      return [];
+        console.error('Error al dibujar la ruta:', error);
+        return [];
     }
-  }
+}
 
   isComplete(): boolean {
     return this.destino !== '' && this.descripcion !== '' && this.asientos !== null && this.costo !== null;
@@ -243,43 +183,47 @@ export class CrearViajePage implements OnInit, OnDestroy {
         destinoCoords: this.destinoCoords,
         asientosDisponibles: this.asientos,
         conductorId: this.userId,
-        estado: 'activo',
-        ruta: rutaCoordenadas
+        estado: 'activo', // Establecer estado como activo
+        ruta: rutaCoordenadas,
       };
 
-      try {
-        await this.db.list('viajes').push(viajeData).then(viajeRef => {
-          const viajeId = viajeRef.key || '';
-          this.db.object(`viajes/${viajeId}`).update({ id: viajeId });
-          this.db.list(`usuarios/${this.userId}/viajes`).set(viajeId, viajeData);
+      // Guardar en Firebase
+      const viajeRef = this.db.list('viajes').push(viajeData);
+      this.viajeId = viajeRef.key || '';
+      await this.db.object(`viajes/${this.viajeId}`).update({ id: this.viajeId });
 
-          this.presentToast('Viaje creado exitosamente.');
-          this.router.navigate(['/conductor']);
-        });
-      } catch (error) {
-        console.error('Error al crear el viaje:', error);
-        this.mostrarAlerta('Ocurrió un error al crear el viaje.');
-      }
+      // Guardar en la ruta específica del usuario
+      await this.db.list(`usuarios/${this.userId}/viajes`).set(this.viajeId, viajeData);
+
+      // Guardar en Ionic Storage
+      await this.guardarViajeLocal(viajeData);
+
+      // Actualizar experiencia y mostrar éxito
+      this.updateExperience(5);
+      await this.mostrarAlerta('Su viaje se ha creado correctamente.');
+      this.router.navigate(['/conductor']);
     } else {
-      const viajeTemp = {
-        destino: this.destino,
-        descripcion: this.descripcion,
-        asientos: this.asientos,
-        costo: this.costo,
-        ubicacionInicial: this.ubicacionInicial,
-        destinoCoords: this.destinoCoords,
-        ruta: []
-      };
-      localStorage.setItem('viajeTemp', JSON.stringify(viajeTemp));
-      this.presentToast('Datos guardados localmente. Se enviarán cuando haya conexión.');
+      await this.mostrarAlerta('Por favor, completa todos los campos.');
     }
   }
 
-  presentToast(message: string) {
-    const toast = document.createElement('ion-toast');
-    toast.message = message;
-    toast.duration = 3000;
-    document.body.appendChild(toast);
-    toast.present();
+  async guardarViajeLocal(viajeData: any) {
+    let viajesLocales = await this.storage.get('viajes') || [];
+    viajesLocales.push(viajeData);
+    await this.storage.set('viajes', viajesLocales);
+    console.log('Viaje guardado en Ionic Storage:', viajeData);
+  }
+
+  updateExperience(points: number) {
+    this.userExperience += points;
+    if (this.userExperience >= this.experienceNeededForNextLevel) {
+      this.userLevel++;
+      this.userExperience -= this.experienceNeededForNextLevel;
+      this.experienceNeededForNextLevel += 10;
+    }
+    this.db.object(`usuarios/${this.userId}/profile`).update({
+      level: this.userLevel,
+      experience: this.userExperience
+    });
   }
 }

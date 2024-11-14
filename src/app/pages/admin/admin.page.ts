@@ -15,18 +15,22 @@ export class AdminPage implements OnInit {
 
   gestionarUsuarios() {
     console.log('Gestionar Usuarios');
+    this.router.navigate(['/gestionusuarios']);  // Navegar a la página de gestión de usuarios
   }
 
   gestionarSolicitudes() {
     console.log('Revisar Solicitudes de Transporte');
+    this.router.navigate(['/solicitudes']);
   }
 
   verReportes() {
     console.log('Ver Reportes');
+    this.router.navigate(['/reportes']);
   }
 
   enviarNotificaciones() {
     console.log('Enviar Notificaciones');
+    this.router.navigate(['/notificacionesadmin']);
   }
 
   logout() {

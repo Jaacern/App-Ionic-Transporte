@@ -13,6 +13,14 @@
   <div class="role-selection-container">
     <h1>Bienvenido, {{ userEmail }}</h1>
 
+    <!-- Card solo visible para admins -->
+    <div *ngIf="isAdmin" class="role-card admin-card" (click)="selectAdmin()">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+      <h2>Panel de Administrador</h2>
+      <p>Gestión de Usuarios, Solicitudes, Estadísticas y Notificaciones</p>
+      <ion-button expand="full" color="primary">Ingresar a panel</ion-button>
+    </div>
+
     <div *ngIf="viajeActivo; else roleSelection">
       <h2>Ruta del Viaje Aceptado</h2>
       <div id="map" style="height: 300px;"></div>

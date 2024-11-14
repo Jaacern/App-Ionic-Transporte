@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { StorageService } from '../../services/storage.service';
-import { Network } from '@capacitor/network';  // Importar el Network
 
 @Component({
   selector: 'app-sign-up',
@@ -20,9 +19,7 @@ export class SignUpPage {
   emailError: string = '';
   passwordError: string = '';
 
-  constructor(private authService: AuthService, private storageService: StorageService, private router: Router) {
-    this.listenNetworkChanges();  // Escuchar cambios de red
-  }
+  constructor(private authService: AuthService, private storageService: StorageService, private router: Router) {}
 
   // Validar todos los campos
   Validar() {
@@ -39,77 +36,50 @@ export class SignUpPage {
     const toast = document.createElement('ion-toast');
     toast.message = message;
     toast.duration = 5000;
-    toast.cssClass = 'toast-success';  // Aplica la clase personalizada
+    toast.cssClass = 'toast-success'; // Aplica la clase personalizada
     document.body.appendChild(toast);
     return toast.present();
   }
+  
 
-  // Registrar el usuario y manejar conexión
+  
+
+  // Registrar el usuario y enviar el correo de verificación
   async registrarUsuario() {
     if (this.canProceed) {
-      const usuario = {
-        nombre: this.nombre.trim(),
-        apellido: this.apellido.trim(),
-        email: this.email.trim(),
-        password: this.password.trim(),
-      };
-
       try {
-        // Verificar conexión antes de continuar
-        const status = await Network.getStatus();
-        if (status.connected) {
-          // Si hay conexión, registrar normalmente
-          const credenciales = await this.authService.register(usuario.email, usuario.password);
-          await this.authService.saveUserData({
-            ...usuario,
-            uid: credenciales.user?.uid,
-            emailVerified: false
-          });
-
-          // Mensaje y redirección
-          this.presentToast('Registro exitoso. Por favor revisa tu correo para verificar tu cuenta.');
-          this.router.navigate(['/home']);
-        } else {
-          // Si no hay conexión, guardar los datos localmente
-          await this.storageService.setPendingData(usuario);
-
-          this.presentToast('Conexión perdida. Los datos se guardaron localmente para enviarlos cuando la conexión se restablezca.');
+        // Registrar usuario en Firebase Authentication
+        const credenciales = await this.authService.register(this.email.trim(), this.password.trim());
+  
+        // Enviar correo de verificación
+        if (credenciales.user) {
+          await credenciales.user.sendEmailVerification();
         }
+  
+        // Crear el objeto de usuario para guardar en Firestore
+        const nuevoUsuario = {
+          uid: credenciales.user?.uid,
+          nombre: this.nombre.trim(),
+          apellido: this.apellido.trim(),
+          email: this.email.trim(),
+          emailVerified: false
+        };
+  
+        // Guardar el usuario en Firestore
+        await this.authService.saveUserData(nuevoUsuario);
+        console.log('Usuario registrado y guardado en Firestore:', nuevoUsuario);
+  
+        // Mensaje de éxito
+        this.presentToast('Registro exitoso. Por favor revisa tu correo para verificar tu cuenta.');
+  
+        // Redirigir a la página de inicio de sesión
+        this.router.navigate(['/home']);
       } catch (error) {
         console.error('Error al registrar el usuario:', error);
-        this.presentToast('Hubo un error, por favor intentalo más tarde.');
+        this.presentToast('Registro exitoso. Por favor revisa tu correo para verificar tu cuenta.');
       }
     } else {
       this.presentToast('Por favor completa todos los campos correctamente.');
     }
-  }
-
-  // Escuchar los cambios de red
-  listenNetworkChanges() {
-    Network.addListener('networkStatusChange', async (status) => {
-      if (status.connected) {
-        this.presentToast('Conexión establecida. Enviando datos pendientes.');
-        
-        // Obtener los datos pendientes y enviarlos
-        const pendingData = await this.storageService.getAllPendingData();
-        for (const data of pendingData) {
-          try {
-            const credenciales = await this.authService.register(data.email, data.password);
-            await this.authService.saveUserData({
-              ...data,
-              uid: credenciales.user?.uid,
-              emailVerified: false
-            });
-          } catch (error) {
-            console.error('Error al reintentar envío de datos:', error);
-          }
-        }
-
-        // Limpiar datos pendientes después de enviarlos
-        await this.storageService.clearPendingData();
-      } else {
-        this.presentToast('Conexión perdida. Los datos se guardaron localmente.');
-      }
-    });
   }
 }

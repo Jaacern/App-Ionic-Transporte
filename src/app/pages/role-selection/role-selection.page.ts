@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireDatabase } from '@angular/fire/compat/database';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import * as mapboxgl from 'mapbox-gl';
 import { environment } from '../../../environments/environment';
 import { NotificacionesService } from '../../services/notificaciones.service';
@@ -15,6 +16,7 @@ import { Subscription } from 'rxjs';
 })
 export class RoleSelectionPage implements OnInit, OnDestroy {
   userEmail: string | null = null;
+  isAdmin: boolean = false; // Variable para saber si el usuario es admin
   userId: string | null = null;
   map!: mapboxgl.Map;
   viajeActivo: any = null;
@@ -27,7 +29,8 @@ export class RoleSelectionPage implements OnInit, OnDestroy {
     private afAuth: AngularFireAuth,
     private db: AngularFireDatabase,
     private notificacionesService: NotificacionesService,
-    private storage: Storage
+    private storage: Storage,
+    private afs: AngularFirestore // Firestore para acceder a los datos del usuario
   ) {}
 
   async ngOnInit() {
@@ -36,6 +39,7 @@ export class RoleSelectionPage implements OnInit, OnDestroy {
       if (user) {
         this.userEmail = user.email;
         this.userId = user.uid;
+        this.checkUserRole(user.uid); // Verificar el rol del usuario
         this.verificarViajeActivo(); // Llama sin parámetro
         this.verificarNotificaciones();
       } else {
@@ -52,7 +56,22 @@ export class RoleSelectionPage implements OnInit, OnDestroy {
       this.viajeActivoSubscription.unsubscribe();
     }
   }
-
+ // Verifica el rol del usuario en Firestore
+ checkUserRole(uid: string) {
+  this.afs.doc(`users/${uid}`).valueChanges().subscribe((userData: any) => {
+    if (userData) {
+      this.isAdmin = userData.role === 'admin'; // Establece true si el rol es admin
+    }
+  });
+}
+ // Método para seleccionar el administrador
+ selectAdmin() {
+  if (this.isAdmin) {
+    this.router.navigate(['/admin']);
+  } else {
+    alert('No tienes permisos para acceder a esta sección');
+  }
+}
   verificarViajeActivo() {
     if (this.userId) {
       this.viajeActivoSubscription = this.db

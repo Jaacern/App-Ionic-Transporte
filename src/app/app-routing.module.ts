@@ -56,7 +56,8 @@ const routes: Routes = [
   {
     path: 'buscar-conductor',
     loadChildren: () => import('./pages/buscar-conductor/buscar-conductor.module').then( m => m.BuscarConductorPageModule)
-  },  {
+  },
+  {
     path: 'recuperar',
     loadChildren: () => import('./pages/recuperar/recuperar.module').then( m => m.RecuperarPageModule)
   },
@@ -64,10 +65,23 @@ const routes: Routes = [
     path: 'notificaciones',
     loadChildren: () => import('./pages/notificaciones/notificaciones.module').then( m => m.NotificacionesPageModule)
   },
+  {
+    path: 'gestionusuarios',
+    loadChildren: () => import('./pages/admin/gestionusuarios/gestionusuarios.module').then(m => m.GestionusuariosPageModule)
+  },
+  {
+    path: 'reportes',
+    loadChildren: () => import('./pages/admin/reportes/reportes.module').then(m => m.ReportesPageModule)
+  },
+  {
+    path: 'solicitudes',
+    loadChildren: () => import('./pages/admin/solicitudes/solicitudes.module').then(m => m.SolicitudesPageModule)
+  },
+  {
+    path: 'notificacionesadmin',
+    loadChildren: () => import('./pages/admin/notificacionesadmin/notificacionesadmin.module').then( m => m.NotificacionesadminPageModule)
+  },
 
-
- 
-  
 ];
 
 @NgModule({

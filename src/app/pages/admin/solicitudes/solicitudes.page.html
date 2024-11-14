@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>Solicitudes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+  <div class="admin-panel">
+    <!-- Solicitudes dentro de un Card -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Viajes de Conductores</ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <ion-list>
+          <!-- Lista de conductores con sus viajes -->
+          <ion-item *ngFor="let usuario of usuariosConViajes">
+            <ion-label>
+              <h2>Conductor: {{ usuario.email }}</h2>
+              <p [ngClass]="'viajes-text'">Viajes: {{ usuario.viajes.length }}</p> <!-- Viajes en rojo -->
+
+              <ion-list>
+                <!-- Lista de viajes de un conductor -->
+                <ion-item *ngFor="let viaje of usuario.viajes">
+                  <ion-label>
+                    <h3>Destino: {{ viaje.destino }}</h3>
+                    <p [ngClass]="'estado-text'">Estado: {{ viaje.estado }}</p> <!-- Estado en verde -->
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
